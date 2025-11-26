@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adriano Rodrigo | Mentor de Posicionamento</title>
+    <meta name="description" content="Você não precisa de mais velocidade. Precisa de direção. Transforme sua liderança com a metodologia Rota 360 e alinhe propósito com resultado." />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://adrianorodrigo.com/" />
+    <meta property="og:title" content="Adriano Rodrigo | Mentor de Posicionamento" />
+    <meta property="og:description" content="Você não precisa de mais velocidade. Precisa de direção. Transforme sua liderança com a metodologia Rota 360." />
+    <meta property="og:image" content="https://adrianorodrigo.com/hero.png" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://adrianorodrigo.com/" />
+    <meta name="twitter:title" content="Adriano Rodrigo | Mentor de Posicionamento" />
+    <meta name="twitter:description" content="Você não precisa de mais velocidade. Precisa de direção. Transforme sua liderança com a metodologia Rota 360." />
+    <meta name="twitter:image" content="https://adrianorodrigo.com/hero.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- Additional SEO -->
+    <meta name="author" content="Adriano Rodrigo" />
+    <meta name="keywords" content="mentor, posicionamento, liderança, rota 360, desenvolvimento pessoal, coaching, mentoria empresarial" />
+    <link rel="canonical" href="https://adrianorodrigo.com/" />
+    
+    <!-- Google Analytics 4 - Replace G-XXXXXXXXXX with your actual Measurement ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      
+      // Wait for user consent before tracking
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied'
+      });
+      
+      gtag('config', 'G-XXXXXXXXXX', {
+        'anonymize_ip': true,
+        'cookie_flags': 'SameSite=None;Secure'
+      });
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['Cinzel', 'serif'],
+              sans: ['Montserrat', 'sans-serif'],
+            },
+            colors: {
+              gold: {
+                50: '#F9F5EB',
+                100: '#E8DFC5',
+                200: '#D6C69A',
+                300: '#C4AD70',
+                400: '#B69A55', // Muted Gold
+                500: '#9E8038', // Base Classic Gold
+                600: '#7F6526',
+                700: '#614B18',
+                800: '#453410',
+                900: '#2A1F08',
+              },
+              luxury: {
+                // PALETA MARROM EXTRA DARK (Deep Espresso)
+                950: '#0c0a09', // Quase preto quente (Café Torrado)
+                900: '#1c1917', // Marrom muito escuro (Seções)
+                800: '#292524', // Chocolate Amargo (Cards)
+                700: '#44403c', // Hover leve
+                600: '#57534e', // Bordas sutis
+              }
+            },
+            animation: {
+              'fade-up': 'fadeUp 0.8s ease-out forwards',
+              'fade-in': 'fadeIn 1s ease-out forwards',
+            },
+            keyframes: {
+              fadeUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom scrollbar for dark theme */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0c0a09; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #292524; 
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #9E8038; 
+      }
+      
+      .text-shadow-sm {
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #44403c;
+        border-radius: 4px;
+      }
+
+      /* Optimize backdrop-blur for mobile */
+      @media (max-width: 768px) {
+        .backdrop-blur-md, .backdrop-blur-sm, .backdrop-blur-xl {
+          backdrop-filter: none !important;
+          background-color: rgba(12, 10, 9, 0.95) !important;
+        }
+      }
+
+      /* Reduce motion for accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Adriano Rodrigo",
+    "jobTitle": "Mentor de Posicionamento",
+    "url": "https://adrianorodrigo.com",
+    "description": "Mentor especializado em posicionamento, liderança consciente e desenvolvimento de propósito através da metodologia Rota 360.",
+    "image": "https://adrianorodrigo.com/hero.png",
+    "knowsAbout": ["Mentoria", "Posicionamento", "Liderança", "Desenvolvimento Pessoal", "Coaching Executivo"],
+    "offers": {
+      "@type": "Service",
+      "name": "Rota 360",
+      "description": "Metodologia de transformação pessoal e profissional através de consciência, visão e direção"
+    }
+  }
+  </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-luxury-950 text-gray-200 antialiased selection:bg-gold-600 selection:text-white">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
