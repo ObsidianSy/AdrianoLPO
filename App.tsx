@@ -27,12 +27,16 @@ import {
   UploadCloud,
   Trash2
 } from 'lucide-react';
+import { LoginModal } from './src/components/LoginModal';
+import { onAuthChange, logout, isAuthenticated } from './src/services/auth.service';
+import { getAllEvents, createEvent, deleteEvent as deleteEventFromDB } from './src/services/firestore.service';
 
 // --- Constants & Data ---
 
 const NAV_LINKS = [
   { name: 'Rota 360', href: '#metodo', icon: Compass },
   { name: 'Agenda', href: '#agenda', action: 'agenda', icon: Calendar },
+  { name: 'Sobre Mim', href: '#sobre', action: 'about', icon: Target },
   { name: 'Contato', href: '#contato', icon: Mail },
 ];
 
@@ -205,15 +209,15 @@ const Header = ({ onNavigate }) => {
   }, []);
 
   return (
-    <nav className={`relative z-50 transition-all duration-500 ${scrolled ? 'bg-luxury-950/95 backdrop-blur-md py-4 border-b border-luxury-800 shadow-2xl' : 'bg-transparent py-6'}`}>
+    <nav className={`relative z-50 transition-all duration-500 ${scrolled ? 'bg-luxury-950/95 backdrop-blur-md py-3 border-b border-luxury-800 shadow-2xl' : 'bg-transparent py-5'}`}>
       <div className="w-full px-6 flex justify-between items-center">
         <a href="#" onClick={() => window.scrollTo(0,0)} className="flex flex-col items-center group cursor-pointer">
-          <span className="font-serif text-lg tracking-[0.2em] text-gold-200 font-bold group-hover:text-gold-400 transition-colors">ADRIANO</span>
-          <span className="text-[10px] uppercase tracking-[0.4em] text-gray-500 group-hover:text-gold-300 transition-colors">Rodrigo</span>
+          <span className="font-sans text-sm tracking-[0.15em] text-gold-200 font-medium group-hover:text-gold-400 transition-colors">Adriano</span>
+          <span className="text-[9px] uppercase tracking-[0.25em] text-gray-500 group-hover:text-gold-300 transition-colors font-light">Rodrigo</span>
         </a>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex space-x-12">
+        <div className="hidden md:flex space-x-8">
           {NAV_LINKS.map((link) => (
             <a 
               key={link.name} 
@@ -226,7 +230,7 @@ const Header = ({ onNavigate }) => {
                   smoothScrollTo(link.href);
                 }
               }}
-              className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-gold-400 transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-luxury-950 rounded-sm px-2 py-1"
+              className="text-[11px] font-normal tracking-wide text-gray-400 hover:text-gold-400 transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 focus:ring-offset-luxury-950 rounded-sm px-2 py-1"
               aria-label={`Navegar para seção ${link.name}`}
             >
               {link.name}
@@ -290,7 +294,7 @@ const Header = ({ onNavigate }) => {
   );
 };
 
-const Hero = () => {
+const Hero = ({ onNavigate }) => {
   return (
     <section className="relative min-h-[70vh] md:min-h-[85vh] flex flex-col justify-end overflow-hidden bg-luxury-950 rounded-b-[3rem] md:rounded-b-[5rem] shadow-2xl shadow-black/80 z-10">
       
@@ -309,48 +313,46 @@ const Hero = () => {
 
       {/* Content - Positioned at very bottom */}
       <div className="relative z-10 container mx-auto px-6 pb-8 md:pb-12">
-        <div className="max-w-md md:ml-4 lg:ml-12 border-l border-gold-500/30 pl-6 md:pl-8 py-4">
-          <p className="text-gold-500/80 text-[10px] font-bold tracking-[0.2em] uppercase mb-2 shadow-black drop-shadow-md">
+        <div className="max-w-md md:ml-4 lg:ml-12 border-l border-gold-500/20 pl-6 md:pl-8 py-4">
+          <p className="text-gold-500/70 text-[9px] font-normal tracking-[0.15em] uppercase mb-3 shadow-black drop-shadow-md">
             Mentor de Posicionamento
           </p>
           
-          <h1 className="font-serif text-2xl md:text-4xl text-white mb-4 leading-tight drop-shadow-lg">
+          <h1 className="font-sans text-xl md:text-3xl text-white mb-4 leading-tight drop-shadow-lg font-light tracking-tight">
             Adriano <br className="hidden md:block"/>
             <span className="text-gold-200/90">Rodrigo</span>
           </h1>
 
-          <div className="space-y-1 mb-6">
-            <p className="text-sm md:text-base text-gray-400 font-light drop-shadow-md max-w-xs">
+          <div className="space-y-2 mb-6">
+            <p className="text-xs md:text-sm text-gray-400 font-light drop-shadow-md max-w-xs leading-relaxed">
               Você não precisa de mais velocidade.
             </p>
-            <p className="text-base md:text-lg text-gold-400 font-serif italic drop-shadow-md">
+            <p className="text-sm md:text-base text-gold-400 font-light italic drop-shadow-md">
               Precisa de direção.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <a 
-              href="#metodo"
+            <button 
               onClick={(e) => {
                 e.preventDefault();
                 smoothScrollTo('#metodo');
               }}
-              className="inline-flex justify-center items-center gap-2 px-5 py-2.5 bg-gold-600 text-white uppercase tracking-widest text-[10px] font-bold hover:bg-gold-500 transition-all duration-300 shadow-lg shadow-black/40 rounded-full w-fit cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-luxury-950"
+              className="inline-flex justify-center items-center gap-2 px-5 py-2.5 bg-gold-600 text-white tracking-wide text-[10px] font-normal hover:bg-gold-500 transition-all duration-300 shadow-lg shadow-black/40 rounded-full w-fit cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-luxury-950"
               aria-label="Conhecer a metodologia Rota 360"
             >
               Conheça a Rota 360
-            </a>
-            <a 
-              href="#contato"
+            </button>
+            <button 
               onClick={(e) => {
                 e.preventDefault();
-                smoothScrollTo('#contato');
+                onNavigate && onNavigate('about');
               }}
-              className="inline-flex justify-center items-center gap-2 px-5 py-2.5 border border-gold-600/30 text-gold-100 uppercase tracking-widest text-[10px] font-bold hover:bg-gold-600/10 hover:border-gold-500 transition-all duration-300 backdrop-blur-sm rounded-full w-fit cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-luxury-950"
+              className="inline-flex justify-center items-center gap-2 px-5 py-2.5 border border-gold-600/30 text-gold-100 tracking-wide text-[10px] font-normal hover:bg-gold-600/10 hover:border-gold-500 transition-all duration-300 backdrop-blur-sm rounded-full w-fit cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-luxury-950"
               aria-label="Saber mais sobre Adriano Rodrigo"
             >
-              Contato
-            </a>
+              Sobre Mim
+            </button>
           </div>
         </div>
       </div>
@@ -455,31 +457,31 @@ const MethodSection = () => {
 
           <div className="md:w-1/2 space-y-8">
             <div>
-              <span className="text-gold-600 text-xs font-bold tracking-[0.2em] uppercase">O Método</span>
-              <h2 className="font-serif text-4xl md:text-5xl text-white mt-2 mb-6">ROTA 360°</h2>
-              <p className="text-lg text-gray-400 font-light leading-relaxed">
+              <span className="text-gold-600 text-[10px] font-normal tracking-[0.15em] uppercase">O Método</span>
+              <h2 className="font-sans text-2xl md:text-3xl text-white mt-2 mb-6 font-light tracking-tight">Rota 360°</h2>
+              <p className="text-sm text-gray-400 font-light leading-relaxed">
                 O Rota 360 é um processo de leitura completa da vida em 360°: mental, emocional, espiritual e prático.
               </p>
             </div>
 
             <div className="grid grid-cols-1 gap-6">
               <div className="flex gap-6 items-start bg-luxury-900 p-6 rounded-2xl border border-luxury-600/10">
-                <div className="mt-1 text-gold-600 bg-gold-900/10 p-3 rounded-full"><Target size={24} /></div>
+                <div className="mt-1 text-gold-600 bg-gold-900/10 p-3 rounded-full"><Target size={20} /></div>
                 <div>
-                  <h4 className="text-white font-serif text-lg mb-2">O que ele revela?</h4>
-                  <ul className="space-y-2 text-sm text-gray-500">
-                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-gold-600 rounded-full"/> Pontos cegos e desalinhamentos</li>
-                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-gold-600 rounded-full"/> Verdades ignoradas</li>
-                    <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-gold-600 rounded-full"/> Novas possibilidades de rota</li>
+                  <h4 className="text-white font-sans text-sm mb-2 font-medium">O que ele revela?</h4>
+                  <ul className="space-y-2 text-xs text-gray-500">
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-gold-600 rounded-full"/> Pontos cegos e desalinhamentos</li>
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-gold-600 rounded-full"/> Verdades ignoradas</li>
+                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-gold-600 rounded-full"/> Novas possibilidades de rota</li>
                   </ul>
                 </div>
               </div>
 
               <div className="flex gap-6 items-start bg-luxury-900 p-6 rounded-2xl border border-luxury-600/10">
-                <div className="mt-1 text-gold-600 bg-gold-900/10 p-3 rounded-full"><Compass size={24} /></div>
+                <div className="mt-1 text-gold-600 bg-gold-900/10 p-3 rounded-full"><Compass size={20} /></div>
                 <div>
-                  <h4 className="text-white font-serif text-lg mb-2">O que ele combina?</h4>
-                  <p className="text-sm text-gray-500 leading-relaxed">
+                  <h4 className="text-white font-sans text-sm mb-2 font-medium">O que ele combina?</h4>
+                  <p className="text-xs text-gray-500 leading-relaxed">
                     Espiritualidade prática, consciência elevada, visão estratégica, leitura comportamental e clareza de propósito.
                   </p>
                 </div>
@@ -487,8 +489,8 @@ const MethodSection = () => {
             </div>
 
             <div className="pt-2">
-               <p className="text-xl text-white font-serif border-l-4 border-gold-700 pl-6 py-2">
-                 O objetivo é um só: <span className="text-gold-500">alinhar rota e restaurar direção.</span>
+               <p className="text-sm text-white font-light border-l-2 border-gold-700 pl-6 py-2 leading-relaxed">
+                 O objetivo é um só: <span className="text-gold-500 font-normal">alinhar rota e restaurar direção.</span>
                </p>
             </div>
           </div>
@@ -521,11 +523,11 @@ const LeadCaptureSection = () => {
           <div className="absolute top-0 right-0 w-64 h-64 bg-gold-600/10 rounded-full blur-[100px]"></div>
           
           <div className="relative z-10 text-center">
-            <span className="text-gold-600 text-xs font-bold tracking-[0.3em] uppercase block mb-3">Material Gratuito</span>
-            <h2 className="font-serif text-2xl md:text-3xl text-white mb-4">
+            <span className="text-gold-600 text-[10px] font-normal tracking-[0.2em] uppercase block mb-3">Material Gratuito</span>
+            <h2 className="font-sans text-xl md:text-2xl text-white mb-4 font-light">
               Baixe o Guia: <span className="text-gold-400">5 Passos para Clareza de Propósito</span>
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto mb-6 leading-relaxed text-sm">
+            <p className="text-gray-400 max-w-2xl mx-auto mb-6 leading-relaxed text-xs">
               Descubra como líderes de alta performance alinham visão, direção e propósito em apenas 5 passos práticos.
             </p>
 
@@ -568,9 +570,9 @@ const Footer = ({ onOpenAdmin }) => {
         <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-12">
           
           <div className="text-center md:text-left max-w-sm">
-            <h2 className="font-serif text-2xl text-white mb-2">ADRIANO RODRIGO</h2>
-            <p className="text-xs text-gold-600 uppercase tracking-[0.3em] mb-5">Mentor de Posicionamento</p>
-            <p className="text-gray-600 text-xs mb-5 leading-relaxed">
+            <h2 className="font-sans text-lg text-white mb-2 font-light tracking-tight">Adriano Rodrigo</h2>
+            <p className="text-[10px] text-gold-600 tracking-[0.2em] mb-5 font-light">Mentor de Posicionamento</p>
+            <p className="text-gray-600 text-[11px] mb-5 leading-relaxed font-light">
               Você não precisa de mais velocidade.<br/>
               Precisa de direção.
             </p>
@@ -582,26 +584,26 @@ const Footer = ({ onOpenAdmin }) => {
           </div>
 
           <div className="text-center md:text-right max-w-md">
-            <h3 className="font-serif text-xl text-white mb-4">Vamos Conversar?</h3>
-            <p className="text-gray-500 font-light text-xs mb-5 leading-relaxed">
+            <h3 className="font-sans text-base text-white mb-4 font-light">Vamos Conversar?</h3>
+            <p className="text-gray-500 font-light text-[11px] mb-5 leading-relaxed">
               Se você busca direção e não apenas velocidade, está no lugar certo. Agende uma sessão de Rota 360 ou Mentoria.
             </p>
-            <a href={WA_LINK('5516999963461')} target="_blank" rel="noopener noreferrer" className="inline-block px-10 py-4 bg-gold-700 text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-gold-600 transition-colors shadow-lg shadow-black/50 rounded-full">
+            <a href={WA_LINK('5516999963461')} target="_blank" rel="noopener noreferrer" className="inline-block px-10 py-4 bg-gold-700 text-white text-[10px] font-normal tracking-wide hover:bg-gold-600 transition-colors shadow-lg shadow-black/50 rounded-full">
               Agendar Conversa
             </a>
           </div>
         </div>
         
-        <div className="mt-20 pt-8 border-t border-luxury-900 flex flex-col md:flex-row justify-between items-center text-xs text-gray-700 gap-4">
+        <div className="mt-20 pt-8 border-t border-luxury-900 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-700 gap-4 font-light">
           <p>&copy; {new Date().getFullYear()} Adriano Rodrigo. Todos os direitos reservados.</p>
           <div className="flex items-center gap-4">
-            <p className="tracking-widest uppercase">Rota 360° Method</p>
+            <p className="tracking-wide">Rota 360° Method</p>
             <button 
               onClick={onOpenAdmin}
               className="flex items-center gap-2 text-gray-700 hover:text-gold-700 transition-colors px-3 py-1 rounded border border-transparent hover:border-gold-900/10"
             >
-              <Lock size={12} />
-              <span className="font-bold uppercase tracking-wider text-[10px]">Área do Mentor</span>
+              <Lock size={11} />
+              <span className="font-normal tracking-wide text-[9px]">Área do Mentor</span>
             </button>
           </div>
         </div>
@@ -735,6 +737,16 @@ const AdminModal = ({ onClose, onSave, events, onDelete }) => {
     }, 500);
   };
 
+  // Cálculo do uso de espaço
+  const estimateDocSize = (obj) => {
+    // Aproximação: converte para string JSON e mede bytes
+    return new TextEncoder().encode(JSON.stringify(obj)).length;
+  };
+  const totalBytes = Array.isArray(events) ? events.reduce((sum, ev) => sum + estimateDocSize(ev), 0) : 0;
+  const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
+  const maxMB = 1024;
+  const percent = Math.min(100, ((totalBytes / (1024 * 1024)) / maxMB) * 100).toFixed(2);
+
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
       {/* Toast Notification */}
@@ -750,6 +762,19 @@ const AdminModal = ({ onClose, onSave, events, onDelete }) => {
       
       <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={onClose}></div>
       <div className="relative bg-luxury-900 w-full max-w-4xl rounded-3xl border border-gold-900/30 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        {/* Espaço Firestore */}
+        <div className="bg-luxury-950 border-b border-gold-900/10 px-6 py-4 flex items-center gap-4">
+          <div className="flex flex-col flex-grow">
+            <span className="text-xs text-gray-400">Uso do Firestore (estimado)</span>
+            <div className="flex items-center gap-2">
+              <div className="w-full bg-luxury-800 rounded-full h-2 overflow-hidden">
+                <div className="bg-gold-600 h-2 rounded-full" style={{ width: `${percent}%` }}></div>
+              </div>
+              <span className="text-xs text-gray-300 ml-2">{totalMB} MB / 1024 MB</span>
+            </div>
+          </div>
+          <span className="text-xs text-gold-400 font-bold">{percent}%</span>
+        </div>
         
         {/* Header */}
         <div className="p-6 border-b border-gold-900/20 bg-gradient-to-r from-luxury-950 to-luxury-900">
@@ -1258,11 +1283,11 @@ const AgendaPage = ({ onBack, events }) => {
 
         {/* Hero Content */}
         <div className="relative z-10 flex-grow flex flex-col justify-center items-center text-center px-4">
-          <span className="text-gold-600 font-bold tracking-[0.4em] text-xs uppercase mb-4 animate-fade-in">Programação Oficial</span>
-          <h1 className="font-serif text-4xl md:text-6xl text-white mb-6 drop-shadow-2xl animate-fade-up">
-            AGENDA & IMERSÕES
+          <span className="text-gold-600 font-light tracking-[0.2em] text-[10px] uppercase mb-4 animate-fade-in">Programação Oficial</span>
+          <h1 className="font-sans text-3xl md:text-4xl text-white mb-6 drop-shadow-2xl animate-fade-up font-light tracking-tight">
+            Agenda & Imersões
           </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm md:text-base leading-relaxed font-light animate-fade-up opacity-80">
+          <p className="text-gray-400 max-w-xl mx-auto text-xs md:text-sm leading-relaxed font-light animate-fade-up opacity-80">
             Garanta seu lugar nos próximos passos da jornada Rota 360. 
             Experiências presenciais para transformar sua direção.
           </p>
@@ -1381,7 +1406,7 @@ const MainContent = ({ onNavigate, onOpenAdmin, onOpenPdfPage }) => {
   return (
     <>
       <Header onNavigate={onNavigate} />
-      <Hero />
+      <Hero onNavigate={onNavigate} />
       <QuickLinks onNavigate={onNavigate} onOpenPdfPage={onOpenPdfPage} />
       <MethodSection />
       <Footer onOpenAdmin={onOpenAdmin} />
@@ -1426,6 +1451,142 @@ const PdfViewerPage = ({ pdfId, onBack }) => {
           <p className="text-gray-500">PDF não encontrado</p>
         </div>
       )}
+    </div>
+  );
+};
+
+// About Modal Component
+const AboutModal = ({ onClose }) => {
+  const closeButtonRef = useRef(null);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (closeButtonRef.current) {
+      closeButtonRef.current.focus();
+    }
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
+      <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={onClose}></div>
+      
+      <div className="relative bg-luxury-900 w-full max-w-3xl rounded-3xl border border-gold-900/30 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+        
+        {/* Header with Image */}
+        <div className="relative h-48 md:h-64 overflow-hidden">
+          <img 
+            src={`${import.meta.env.BASE_URL}hero-v2.png`}
+            alt="Adriano Rodrigo"
+            className="w-full h-full object-cover grayscale-[30%]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-luxury-900 via-luxury-900/50 to-transparent"></div>
+          
+          <button 
+            ref={closeButtonRef}
+            onClick={onClose}
+            className="absolute top-4 right-4 z-20 bg-black/50 text-white p-2.5 rounded-full hover:bg-black/80 transition-colors backdrop-blur-md"
+            aria-label="Fechar modal"
+          >
+            <X size={20} />
+          </button>
+          
+          <div className="absolute bottom-0 left-0 p-6 md:p-8 w-full">
+            <div className="flex items-end gap-4">
+              <div>
+                <h2 id="about-modal-title" className="font-sans text-2xl md:text-3xl text-white mb-2 leading-tight drop-shadow-lg font-light tracking-tight">
+                  Adriano Rodrigo
+                </h2>
+                <p className="text-gold-400 font-light tracking-wide text-[10px]">Mentor de Posicionamento</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
+          
+          <div className="prose prose-invert max-w-none">
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gold-500/10 p-2.5 rounded-xl text-gold-500">
+                  <Target size={18} />
+                </div>
+                <h3 className="text-white font-sans text-base m-0 font-medium">Minha Jornada</h3>
+              </div>
+              <p className="text-gray-400 leading-relaxed text-xs md:text-sm font-light">
+                [Aqui você pode adicionar seu texto sobre você. Este é apenas um placeholder para você substituir com sua história, experiência e filosofia de trabalho.]
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gold-500/10 p-2.5 rounded-xl text-gold-500">
+                  <Compass size={18} />
+                </div>
+                <h3 className="text-white font-sans text-base m-0 font-medium">Filosofia de Trabalho</h3>
+              </div>
+              <p className="text-gray-400 leading-relaxed text-xs md:text-sm font-light">
+                [Adicione aqui sua filosofia e abordagem única. O que te diferencia como mentor? Qual é sua missão?]
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gold-500/10 p-2.5 rounded-xl text-gold-500">
+                  <GraduationCap size={18} />
+                </div>
+                <h3 className="text-white font-sans text-base m-0 font-medium">Experiência & Formação</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3 p-4 bg-luxury-950 rounded-xl border border-luxury-600/10">
+                  <div className="w-1.5 h-1.5 bg-gold-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-xs font-light">[Adicione suas credenciais, certificações e experiências relevantes]</p>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-luxury-950 rounded-xl border border-luxury-600/10">
+                  <div className="w-1.5 h-1.5 bg-gold-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-xs font-light">[Adicione mais experiências]</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-gold-900/20 to-luxury-950 p-6 rounded-2xl border border-gold-900/30">
+              <p className="text-gold-400 font-light text-sm md:text-base italic text-center leading-relaxed">
+                "[Adicione aqui uma citação ou mensagem inspiradora que represente sua essência]"
+              </p>
+            </div>
+          </div>
+
+          {/* CTA Footer */}
+          <div className="mt-8 pt-6 border-t border-luxury-600/20 flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => {
+                onClose();
+                setTimeout(() => smoothScrollTo('#contato'), 300);
+              }}
+              className="flex-1 bg-gold-600 hover:bg-gold-500 text-white font-normal tracking-wide text-[11px] py-4 rounded-xl transition-all shadow-lg hover:shadow-gold-500/20"
+            >
+              Entre em Contato
+            </button>
+            <button
+              onClick={() => {
+                onClose();
+                setTimeout(() => smoothScrollTo('#metodo'), 300);
+              }}
+              className="flex-1 border border-gold-600/30 hover:bg-gold-600/10 text-gold-100 font-normal tracking-wide text-[11px] py-4 rounded-xl transition-all"
+            >
+              Conheça o Método
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -1501,7 +1662,38 @@ const App = () => {
   const [currentView, setCurrentView] = useState('home');
   const [events, setEvents] = useState(INITIAL_EVENTS);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [currentPdfId, setCurrentPdfId] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
+
+  // Monitor authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthChange((user) => {
+      setIsAuthenticated(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Load events from Firestore on mount
+  useEffect(() => {
+    const loadEvents = async () => {
+      setIsLoadingEvents(true);
+      const firestoreEvents = await getAllEvents();
+      
+      // If Firestore has events, use them; otherwise use INITIAL_EVENTS
+      if (firestoreEvents.length > 0) {
+        setEvents(firestoreEvents);
+      } else {
+        setEvents(INITIAL_EVENTS);
+      }
+      
+      setIsLoadingEvents(false);
+    };
+    
+    loadEvents();
+  }, []);
 
   // Scroll to top when view changes
   useEffect(() => {
@@ -1554,19 +1746,31 @@ const App = () => {
     setCurrentPdfId(null);
   }, []);
 
-  const handleAddEvent = (newEvent) => {
-    const eventWithId = {
-      ...newEvent,
-      id: events.length + 1
-    };
-    setEvents([...events, eventWithId]);
-    // Automatically switch to agenda view after creating
-    setCurrentView('agenda');
+  const handleAddEvent = async (newEvent) => {
+    // Save to Firestore
+    const result = await createEvent(newEvent);
+    
+    if (result.success) {
+      // Reload events from Firestore to get the new one with proper ID
+      const updatedEvents = await getAllEvents();
+      setEvents(updatedEvents);
+      
+      // Keep modal open but switch to manage tab (handled by AdminModal internally)
+      // No need to change view here
+    } else {
+      // Handle error (could show toast notification)
+      console.error('Failed to create event:', result.error);
+      alert(result.error);
+    }
   };
 
   // Navigation wrapper to keep URL in sync
   const handleNavigate = (viewName) => {
     setCurrentPdfId(null);
+    if (viewName === 'about') {
+      setIsAboutOpen(true);
+      return;
+    }
     setCurrentView(viewName);
     if (viewName === 'agenda') {
       window.history.pushState(null, '', '/agenda');
@@ -1581,8 +1785,34 @@ const App = () => {
     window.history.pushState(null, '', `/pdf/${id}`);
   };
 
-  const handleDeleteEvent = (eventId) => {
-    setEvents(events.filter(event => event.id !== eventId));
+  const handleDeleteEvent = async (eventId) => {
+    // Delete from Firestore
+    const result = await deleteEventFromDB(eventId);
+    
+    if (result.success) {
+      // Reload events from Firestore to ensure sync
+      const updatedEvents = await getAllEvents();
+      setEvents(updatedEvents);
+    } else {
+      console.error('Failed to delete event:', result.error);
+      alert(result.error);
+    }
+  };
+
+  const handleOpenAdmin = () => {
+    // Check if user is authenticated
+    if (isAuthenticated) {
+      setIsAdminOpen(true);
+    } else {
+      // Show login modal
+      setIsLoginOpen(true);
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    // After successful login, open admin panel
+    setIsLoginOpen(false);
+    setIsAdminOpen(true);
   };
 
   return (
@@ -1605,6 +1835,17 @@ const App = () => {
           <div className="relative z-10 bg-luxury-950/80">
             <CookieConsent />
             
+            {isLoginOpen && (
+              <LoginModal 
+                onClose={() => setIsLoginOpen(false)} 
+                onLoginSuccess={handleLoginSuccess}
+              />
+            )}
+            
+            {isAboutOpen && (
+              <AboutModal onClose={() => setIsAboutOpen(false)} />
+            )}
+            
             {isAdminOpen && (
               <AdminModal 
                 onClose={() => setIsAdminOpen(false)} 
@@ -1617,7 +1858,7 @@ const App = () => {
             {currentView === 'home' ? (
               <MainContent 
                 onNavigate={handleNavigate} 
-                onOpenAdmin={() => setIsAdminOpen(true)}
+                onOpenAdmin={handleOpenAdmin}
                 onOpenPdfPage={handleOpenPdfPage}
               />
             ) : currentView === 'agenda' ? (
@@ -1636,6 +1877,17 @@ const App = () => {
       <div className="md:hidden bg-luxury-950 min-h-screen">
         <CookieConsent />
         
+        {isLoginOpen && (
+          <LoginModal 
+            onClose={() => setIsLoginOpen(false)} 
+            onLoginSuccess={handleLoginSuccess}
+          />
+        )}
+        
+        {isAboutOpen && (
+          <AboutModal onClose={() => setIsAboutOpen(false)} />
+        )}
+        
         {isAdminOpen && (
           <AdminModal 
             onClose={() => setIsAdminOpen(false)} 
@@ -1648,7 +1900,7 @@ const App = () => {
         {currentView === 'home' ? (
           <MainContent 
             onNavigate={handleNavigate} 
-            onOpenAdmin={() => setIsAdminOpen(true)}
+            onOpenAdmin={handleOpenAdmin}
             onOpenPdfPage={handleOpenPdfPage}
           />
         ) : currentView === 'agenda' ? (
