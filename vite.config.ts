@@ -4,8 +4,9 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
+    const isGitHubPages = process.env.DEPLOY_TARGET === 'github';
     return {
-      base: mode === 'production' ? '/AdrianoLPO/' : '/',
+      base: isGitHubPages ? '/AdrianoLPO/' : '/',
       server: {
         port: 3000,
         host: '0.0.0.0',
