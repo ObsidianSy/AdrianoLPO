@@ -1121,36 +1121,36 @@ const AdminModal = ({
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 mt-6">
+          <div className="flex flex-wrap gap-2 mt-6">
             <button
               onClick={() => setActiveTab("create")}
-              className={`px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all ${
+              className={`px-3 py-2 sm:px-5 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wide sm:tracking-wider transition-all flex-1 sm:flex-none min-w-0 ${
                 activeTab === "create"
                   ? "bg-gold-600 text-white shadow-lg"
                   : "bg-luxury-800 text-gray-400 hover:bg-luxury-700"
               }`}
             >
-              ➕ Criar Evento
+              <span className="hidden sm:inline">➕ </span>Criar
             </button>
             <button
               onClick={() => setActiveTab("manage")}
-              className={`px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all ${
+              className={`px-3 py-2 sm:px-5 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wide sm:tracking-wider transition-all flex-1 sm:flex-none min-w-0 ${
                 activeTab === "manage"
                   ? "bg-gold-600 text-white shadow-lg"
                   : "bg-luxury-800 text-gray-400 hover:bg-luxury-700"
               }`}
             >
-              📋 Gerenciar ({events?.length || 0})
+              <span className="hidden sm:inline">📋 </span>Gerenciar ({events?.length || 0})
             </button>
             <button
               onClick={() => setActiveTab("stats")}
-              className={`px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all ${
+              className={`px-3 py-2 sm:px-5 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wide sm:tracking-wider transition-all flex-1 sm:flex-none min-w-0 ${
                 activeTab === "stats"
                   ? "bg-gold-600 text-white shadow-lg"
                   : "bg-luxury-800 text-gray-400 hover:bg-luxury-700"
               }`}
             >
-              📊 Estatísticas
+              <span className="hidden sm:inline">📊 </span>Stats
             </button>
           </div>
         </div>
