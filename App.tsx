@@ -66,7 +66,7 @@ const NAV_LINKS = [
 // Default WhatsApp message used across CTAs (URL encoded for links)
 const WHATSAPP_DEFAULT_MESSAGE =
   "Olá, vi o site e o método Rota 360. Gostaria de agendar uma sessão para alinhar minha direção e meu posicionamento.";
-const WHATSAPP_PHONE = "5511999999999"; // Substitua pelo seu número
+const WHATSAPP_PHONE = "16999963461"; // Substitua pelo seu número
 const WA_LINK = (phone) =>
   `https://wa.me/${phone}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE)}`;
 const GA_MEASUREMENT_ID = "G-XXXXXXXXXX"; // Substitua pelo seu ID do GA4
@@ -427,7 +427,7 @@ const Header = ({ onNavigate }) => {
 
           <div className="mt-4">
             <a
-              href={WA_LINK("5511999999999")}
+              href={WA_LINK("16999963461")}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsOpen(false)}
@@ -1140,7 +1140,8 @@ const AdminModal = ({
                   : "bg-luxury-800 text-gray-400 hover:bg-luxury-700"
               }`}
             >
-              <span className="hidden sm:inline">📋 </span>Gerenciar ({events?.length || 0})
+              <span className="hidden sm:inline">📋 </span>Gerenciar (
+              {events?.length || 0})
             </button>
             <button
               onClick={() => setActiveTab("stats")}
