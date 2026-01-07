@@ -1,6 +1,6 @@
 {
-  "name": "Adriano Rodrigo - Mentor de Posicionamento",
-  "short_name": "Adriano LPO",
+  "name": "Rota 360° - Adriano Rodrigo",
+  "short_name": "Rota 360°",
   "description": "Mentor especializado em posicionamento estratégico e liderança com o método Rota 360°",
   "start_url": "/",
   "display": "standalone",
@@ -9,14 +9,10 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512.png",
+      "src": "/hero.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

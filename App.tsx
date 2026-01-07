@@ -908,18 +908,14 @@ const AdminModal = ({
       // Atualizar evento existente
       onUpdate(editingEvent, {
         ...formData,
-        image:
-          formData.image ||
-          `${import.meta.env.BASE_URL}card-bg.jpg`,
+        image: formData.image || `${import.meta.env.BASE_URL}card-bg.jpg`,
       });
       setToast({ type: "success", message: "Evento atualizado com sucesso!" });
     } else {
       // Criar novo evento
       onSave({
         ...formData,
-        image:
-          formData.image ||
-          `${import.meta.env.BASE_URL}card-bg.jpg`,
+        image: formData.image || `${import.meta.env.BASE_URL}card-bg.jpg`,
         schedule: [],
       });
       setToast({ type: "success", message: "Evento criado com sucesso!" });
@@ -1446,8 +1442,13 @@ const AdminModal = ({
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-500">
-                  <Compass size={40} className="mx-auto mb-3 text-gold-500/30" />
-                  <p className="text-base mb-1 text-gray-400">Sua jornada começa aqui</p>
+                  <Compass
+                    size={40}
+                    className="mx-auto mb-3 text-gold-500/30"
+                  />
+                  <p className="text-base mb-1 text-gray-400">
+                    Sua jornada começa aqui
+                  </p>
                   <p className="text-xs">
                     Crie seu primeiro evento na aba "Criar Evento"
                   </p>
@@ -2124,10 +2125,7 @@ const AgendaPage = ({ onBack, events }) => {
           </>
         ) : (
           <div className="text-center py-20">
-            <Compass
-              size={48}
-              className="mx-auto mb-4 text-gold-500/40"
-            />
+            <Compass size={48} className="mx-auto mb-4 text-gold-500/40" />
             <p className="text-gray-300 text-lg mb-2 font-serif">
               Novos horizontes em breve
             </p>
