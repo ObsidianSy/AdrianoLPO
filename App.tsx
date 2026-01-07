@@ -79,65 +79,7 @@ const smoothScrollTo = (id) => {
   }
 };
 
-const INITIAL_EVENTS = [
-  {
-    id: 1,
-    city: "SÃO PAULO/SP",
-    venue: "HOTEL FASANO",
-    date: "15, 16 e 17 de Outubro",
-    time: "09:00 - 18:00",
-    title: "IMERSÃO ROTA 360°",
-    description:
-      "Treinamento intensivo presencial com foco em desbloqueio emocional e clareza de propósito.",
-    image:
-      "https://images.unsplash.com/photo-1544168190-79c17527004f?q=80&w=800&auto=format&fit=crop",
-    status: "Últimas Vagas",
-    schedule: [
-      { time: "09:00", activity: "Credenciamento & Café de Boas-vindas" },
-      { time: "10:00", activity: "Sessão 1: O Despertar da Consciência" },
-      { time: "13:00", activity: "Almoço de Networking" },
-      { time: "14:30", activity: "Sessão 2: Mapeamento de Bloqueios" },
-      { time: "17:00", activity: "Dinâmica de Encerramento" },
-    ],
-  },
-  {
-    id: 2,
-    city: "RIO DE JANEIRO/RJ",
-    venue: "CENTRO DE CONVENÇÕES",
-    date: "28 e 29 de Novembro",
-    time: "14:00 - 20:00",
-    title: "LIDERANÇA & VISÃO",
-    description:
-      "Como líderes podem guiar suas equipes com mais clareza e menos imposição.",
-    image:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop",
-    status: "Inscrições Abertas",
-    schedule: [
-      { time: "14:00", activity: "Check-in" },
-      { time: "15:00", activity: "Liderança Consciente" },
-      { time: "17:00", activity: "Coffee Break" },
-      { time: "18:00", activity: "Construção de Cultura Forte" },
-    ],
-  },
-  {
-    id: 3,
-    city: "CURITIBA/PR",
-    venue: "OPERA DE ARAME",
-    date: "10 de Dezembro",
-    time: "19:00 - 22:00",
-    title: "EXPANSÃO DE CONSCIÊNCIA",
-    description:
-      "Um evento único para fechar o ano com alinhamento total de rota e vida.",
-    image:
-      "https://images.unsplash.com/photo-1475721027767-p05a6dbd4128?q=80&w=800&auto=format&fit=crop",
-    status: "Lista de Espera",
-    schedule: [
-      { time: "19:00", activity: "Abertura dos Portões" },
-      { time: "20:00", activity: "Palestra Magna: O Próximo Nível" },
-      { time: "21:30", activity: "Sessão de Perguntas e Respostas" },
-    ],
-  },
-];
+// Eventos são carregados diretamente do Firestore
 
 const CARDS = [
   {
@@ -968,7 +910,7 @@ const AdminModal = ({
         ...formData,
         image:
           formData.image ||
-          "https://images.unsplash.com/photo-1544168190-79c17527004f?q=80&w=800&auto=format&fit=crop",
+          `${import.meta.env.BASE_URL}card-bg.jpg`,
       });
       setToast({ type: "success", message: "Evento atualizado com sucesso!" });
     } else {
@@ -977,7 +919,7 @@ const AdminModal = ({
         ...formData,
         image:
           formData.image ||
-          "https://images.unsplash.com/photo-1544168190-79c17527004f?q=80&w=800&auto=format&fit=crop",
+          `${import.meta.env.BASE_URL}card-bg.jpg`,
         schedule: [],
       });
       setToast({ type: "success", message: "Evento criado com sucesso!" });
@@ -1504,8 +1446,8 @@ const AdminModal = ({
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-500">
-                  <Calendar size={40} className="mx-auto mb-3 opacity-20" />
-                  <p className="text-base mb-1">Nenhum evento cadastrado</p>
+                  <Compass size={40} className="mx-auto mb-3 text-gold-500/30" />
+                  <p className="text-base mb-1 text-gray-400">Sua jornada começa aqui</p>
                   <p className="text-xs">
                     Crie seu primeiro evento na aba "Criar Evento"
                   </p>
@@ -2182,15 +2124,15 @@ const AgendaPage = ({ onBack, events }) => {
           </>
         ) : (
           <div className="text-center py-20">
-            <Search
+            <Compass
               size={48}
-              className="mx-auto mb-4 text-gray-600 opacity-50"
+              className="mx-auto mb-4 text-gold-500/40"
             />
-            <p className="text-gray-400 text-lg mb-2">
-              Nenhum evento encontrado
+            <p className="text-gray-300 text-lg mb-2 font-serif">
+              Novos horizontes em breve
             </p>
-            <p className="text-gray-600 text-sm">
-              Tente buscar por outra cidade ou evento
+            <p className="text-gray-500 text-sm">
+              Estamos preparando experiências transformadoras para você
             </p>
           </div>
         )}
@@ -2583,7 +2525,7 @@ const CookieConsent = () => {
 
 const App = () => {
   const [currentView, setCurrentView] = useState("home");
-  const [events, setEvents] = useState(INITIAL_EVENTS);
+  const [events, setEvents] = useState([]);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -2630,12 +2572,10 @@ const App = () => {
       // Se não há cache, carregar do Firestore
       const firestoreEvents = await getAllEvents();
 
-      // If Firestore has events, use them; otherwise use INITIAL_EVENTS
+      // Usar eventos do Firestore (se não houver, continua vazio)
+      setEvents(firestoreEvents);
       if (firestoreEvents.length > 0) {
-        setEvents(firestoreEvents);
         saveToCache(firestoreEvents);
-      } else {
-        setEvents(INITIAL_EVENTS);
       }
 
       setIsLoadingEvents(false);
