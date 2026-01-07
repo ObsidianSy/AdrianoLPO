@@ -2155,6 +2155,7 @@ const MainContent = ({ onNavigate, onOpenAdmin, onOpenPdfPage }) => {
 const PdfViewerPage = ({ pdfId, onBack }) => {
   const card = CARDS.find((c) => c.id === pdfId);
   const src = card?.pdf || null;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Add escape key to go back
@@ -2164,6 +2165,19 @@ const PdfViewerPage = ({ pdfId, onBack }) => {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onBack]);
+
+  // Construir URL absoluta do PDF para o Google Docs Viewer
+  const getAbsolutePdfUrl = () => {
+    if (!src) return '';
+    // Se já for URL absoluta, retorna direto
+    if (src.startsWith('http')) return src;
+    // Senão, constrói a URL absoluta
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+    return baseUrl + src.replace(/^\//, '');
+  };
+
+  // URL do Google Docs Viewer (funciona em todos os dispositivos incluindo iOS)
+  const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(getAbsolutePdfUrl())}&embedded=true`;
 
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden bg-luxury-950">
@@ -2176,37 +2190,27 @@ const PdfViewerPage = ({ pdfId, onBack }) => {
         <span className="text-sm font-medium">Voltar</span>
       </button>
 
-      {/* Full screen PDF - com fallback para iOS */}
       {src ? (
         <>
-          {/* Tentar com iframe primeiro (funciona em desktop) */}
-          <iframe
-            src={`${src}#view=FitH&toolbar=0&navpanes=0`}
-            className="absolute inset-0 w-full h-full border-0 md:block hidden"
-            title={card?.title || "Documento"}
-          ></iframe>
-
-          {/* Fallback para mobile/iOS com object */}
-          <object
-            data={`${src}#view=FitH&toolbar=0`}
-            type="application/pdf"
-            className="absolute inset-0 w-full h-full border-0 md:hidden"
-          >
-            <div className="w-full h-full flex flex-col items-center justify-center p-6">
-              <p className="text-gray-400 mb-4 text-center">
-                Este navegador não suporta visualização direta de PDF.
-              </p>
-              <a
-                href={src}
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3 bg-gold-600 hover:bg-gold-500 text-white font-bold rounded-xl transition-all"
-              >
-                Baixar PDF
-              </a>
+          {/* Loading indicator */}
+          {loading && (
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-luxury-950 z-10">
+              <div className="text-center">
+                <div className="w-12 h-12 border-3 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-400 text-sm">Carregando documento...</p>
+              </div>
             </div>
-          </object>
+          )}
+          
+          {/* PDF via Google Docs Viewer - funciona em todos os dispositivos */}
+          <iframe
+            src={googleDocsViewerUrl}
+            className="absolute inset-0 w-full h-full border-0"
+            title={card?.title || "Documento"}
+            style={{ backgroundColor: '#1a1a1a' }}
+            onLoad={() => setLoading(false)}
+            allowFullScreen
+          ></iframe>
         </>
       ) : (
         <div className="w-full h-full flex items-center justify-center">
@@ -2671,9 +2675,11 @@ const App = () => {
   };
 
   const handleOpenPdfPage = (id) => {
-    setCurrentPdfId(id);
-    setCurrentView("pdf");
-    window.history.pushState(null, "", `/pdf/${id}`);
+    // Abre o PDF direto em nova aba
+    const card = CARDS.find((c) => c.id === id);
+    if (card?.pdf) {
+      window.open(card.pdf, '_blank');
+    }
   };
 
   const handleDeleteEvent = async (eventId) => {
