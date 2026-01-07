@@ -2168,16 +2168,20 @@ const PdfViewerPage = ({ pdfId, onBack }) => {
 
   // Construir URL absoluta do PDF para o Google Docs Viewer
   const getAbsolutePdfUrl = () => {
-    if (!src) return '';
+    if (!src) return "";
     // Se já for URL absoluta, retorna direto
-    if (src.startsWith('http')) return src;
+    if (src.startsWith("http")) return src;
     // Senão, constrói a URL absoluta
-    const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
-    return baseUrl + src.replace(/^\//, '');
+    const baseUrl =
+      window.location.origin +
+      window.location.pathname.replace(/\/[^\/]*$/, "/");
+    return baseUrl + src.replace(/^\//, "");
   };
 
   // URL do Google Docs Viewer (funciona em todos os dispositivos incluindo iOS)
-  const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(getAbsolutePdfUrl())}&embedded=true`;
+  const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(
+    getAbsolutePdfUrl()
+  )}&embedded=true`;
 
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden bg-luxury-950">
@@ -2201,13 +2205,13 @@ const PdfViewerPage = ({ pdfId, onBack }) => {
               </div>
             </div>
           )}
-          
+
           {/* PDF via Google Docs Viewer - funciona em todos os dispositivos */}
           <iframe
             src={googleDocsViewerUrl}
             className="absolute inset-0 w-full h-full border-0"
             title={card?.title || "Documento"}
-            style={{ backgroundColor: '#1a1a1a' }}
+            style={{ backgroundColor: "#1a1a1a" }}
             onLoad={() => setLoading(false)}
             allowFullScreen
           ></iframe>
@@ -2678,7 +2682,7 @@ const App = () => {
     // Abre o PDF direto em nova aba
     const card = CARDS.find((c) => c.id === id);
     if (card?.pdf) {
-      window.open(card.pdf, '_blank');
+      window.open(card.pdf, "_blank");
     }
   };
 
