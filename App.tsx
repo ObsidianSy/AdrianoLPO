@@ -2157,8 +2157,29 @@ const PdfViewerPage = ({ pdfId, onBack }) => {
   const src = card?.pdf || null;
   const [loading, setLoading] = useState(true);
 
+  // Detectar iOS (iPhone, iPad, iPod)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  // Construir URL absoluta do PDF
+  const getAbsolutePdfUrl = () => {
+    if (!src) return "";
+    if (src.startsWith("http")) return src;
+    const baseUrl =
+      window.location.origin +
+      window.location.pathname.replace(/\/[^\/]*$/, "/");
+    return baseUrl + src.replace(/^\//, "");
+  };
+
+  // No iOS, abrir PDF diretamente em nova aba (Safari tem viewer nativo excelente)
   useEffect(() => {
-    // Add escape key to go back
+    if (isIOS && src) {
+      window.open(getAbsolutePdfUrl(), "_blank");
+      onBack();
+    }
+  }, [isIOS, src]);
+
+  useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") onBack();
     };
@@ -2166,19 +2187,12 @@ const PdfViewerPage = ({ pdfId, onBack }) => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onBack]);
 
-  // Construir URL absoluta do PDF para o Google Docs Viewer
-  const getAbsolutePdfUrl = () => {
-    if (!src) return "";
-    // Se já for URL absoluta, retorna direto
-    if (src.startsWith("http")) return src;
-    // Senão, constrói a URL absoluta
-    const baseUrl =
-      window.location.origin +
-      window.location.pathname.replace(/\/[^\/]*$/, "/");
-    return baseUrl + src.replace(/^\//, "");
-  };
+  // Se for iOS, não renderiza nada (já abriu em nova aba)
+  if (isIOS) {
+    return null;
+  }
 
-  // URL do Google Docs Viewer (funciona em todos os dispositivos incluindo iOS)
+  // URL do Google Docs Viewer para outros dispositivos
   const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(
     getAbsolutePdfUrl()
   )}&embedded=true`;
@@ -2206,7 +2220,7 @@ const PdfViewerPage = ({ pdfId, onBack }) => {
             </div>
           )}
 
-          {/* PDF via Google Docs Viewer - funciona em todos os dispositivos */}
+          {/* PDF via Google Docs Viewer - para desktop e Android */}
           <iframe
             src={googleDocsViewerUrl}
             className="absolute inset-0 w-full h-full border-0"
